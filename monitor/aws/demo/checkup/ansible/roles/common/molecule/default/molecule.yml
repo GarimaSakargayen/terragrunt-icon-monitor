@@ -6,12 +6,30 @@ driver:
 lint:
   name: yamllint
 platforms:
+
   - name: instance
-    image: centos:7
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu1804}-ansible"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+
+    environment:
+      container: docker
+    groups:
+      - prep
+
 provisioner:
   name: ansible
   lint:
     name: ansible-lint
+  playbooks:
+    converge: playbook.yml
+  inventory:
+    host_vars:
+      instance:
+#        network_name: "testnet"
 verifier:
   name: testinfra
   lint:

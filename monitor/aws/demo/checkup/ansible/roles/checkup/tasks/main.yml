@@ -1,0 +1,45 @@
+---
+
+- name: Create data directory
+  file:
+    path: /home/ubuntu/data
+    mode: '0755'
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+
+#- name: Create config directory
+#  file:
+#    path: /home/ubuntu/config
+#    mode: '0755'
+#    state: directory
+#    owner: ubuntu
+#    group: ubuntu
+
+- name: Render the docker-compose file
+  template:
+    src: "{{ role_path }}/templates/docker-compose.yml.j2"
+    dest: /home/ubuntu/docker-compose.yml
+    mode: '0644'
+    owner: ubuntu
+    group: ubuntu
+
+- name: Copy service
+  template:
+    src: "{{ role_path }}/templates/checkup.service.j2"
+    dest: /etc/systemd/system/checkup.service
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Copy over configs
+  synchronize:
+    src: "{{ role_path }}/files/config"
+    dest: /home/ubuntu
+
+- name: Enable and start service
+  systemd:
+    name: checkup
+    enabled: yes
+    state: started
+
