@@ -1,5 +1,5 @@
 terraform {
-  source = "./examples/defaults"
+  source = "."
 }
 
 include {
@@ -8,14 +8,6 @@ include {
 
 locals {
   secrets = yamldecode(file(find_in_parent_folders("secrets.yaml")))
-}
-
-dependencies {
-  paths = [local.network]
-}
-
-dependency "network" {
-  config_path = local.network
 }
 
 inputs = {
