@@ -1,4 +1,8 @@
-variable "create" {}
+variable "create" {
+  description = "Bool to create all"
+  type = bool
+  default = true
+}
 
 ########
 # Label
@@ -37,4 +41,14 @@ variable "owner" {
   description = "Owner of the infrastructure"
   type        = string
   default     = ""
+}
+
+variable "private_key_path" {
+  description = "Path to the private ssh key"
+  type        = string
+}
+
+variable "public_key" {
+  description = "Public ssh key"
+  type        = string
 }

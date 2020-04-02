@@ -4,23 +4,23 @@ import (
 	"fmt"
 	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/random"
-	"github.com/gruntwork-io/terratest/modules/retry"
-	"github.com/gruntwork-io/terratest/modules/ssh"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
+	//"github.com/gruntwork-io/terratest/modules/retry"
+	//"github.com/gruntwork-io/terratest/modules/ssh"
+	//"strings"
+	//"time"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
-	"strings"
 	"testing"
-	"time"
 )
 
 func TestInstanceStore(t *testing.T) {
 	t.Parallel()
 
-	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, "../", "examples/instance-store")
+	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, "../", "examples/defaults")
 
 	defer test_structure.RunTestStage(t, "teardown", func() {
 		terraformOptions := test_structure.LoadTerraformOptions(t, exampleFolder)
@@ -72,7 +72,7 @@ func configureTerraformOptions(t *testing.T, exampleFolder string) (*terraform.O
 		// Variables to pass to our Terraform code using -var options
 		Vars: map[string]interface{}{
 			"aws_region":       awsRegion,
-			"public_key_path":  keyPair.PublicKey,
+			"public_key":  keyPair.PublicKey,
 			"private_key_path": privateKeyPath,
 		},
 	}

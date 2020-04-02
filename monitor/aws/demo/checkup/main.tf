@@ -1,5 +1,6 @@
-variable "private_key_path" {}
-variable "public_key" {}
+resource "random_pet" "this" {
+  length = 2
+}
 
 module "label" {
   source = "github.com/robc-io/terraform-null-label.git?ref=0.16.1"
@@ -73,7 +74,7 @@ resource "aws_instance" "this" {
   instance_type = "t2.small"
 
   root_block_device {
-    volume_size = 4
+    volume_size = 8
     volume_type = "gp2"
   }
 
