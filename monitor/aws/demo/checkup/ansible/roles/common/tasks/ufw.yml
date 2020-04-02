@@ -3,6 +3,14 @@
 - name: open ssh port
   command: ufw allow 22/tcp
   when: not ufw_status_result.stdout is search("22/tcp.*ALLOW IN.*Anywhere")
+
+- name: open http port
+  command: ufw allow 80/tcp
+  when: not ufw_status_result.stdout is search("80/tcp.*ALLOW IN.*Anywhere")
+
+- name: open https port
+  command: ufw allow 443/tcp
+  when: not ufw_status_result.stdout is search("443/tcp.*ALLOW IN.*Anywhere")
 #
 # Exporters
 #

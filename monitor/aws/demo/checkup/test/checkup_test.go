@@ -1,15 +1,15 @@
 package test
 
 import (
+	"crypto/tls"
 	"fmt"
 	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
+	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
-	//"github.com/gruntwork-io/terratest/modules/retry"
-	//"github.com/gruntwork-io/terratest/modules/ssh"
-	//"strings"
-	//"time"
+	"strings"
+	"time"
 	"io/ioutil"
 	"log"
 	"os"
@@ -38,12 +38,11 @@ func TestInstanceStore(t *testing.T) {
 		terraform.InitAndApply(t, terraformOptions)
 	})
 
-	//test_structure.RunTestStage(t, "validate", func() {
-	//	terraformOptions := test_structure.LoadTerraformOptions(t, exampleFolder)
-	//	keyPair := test_structure.LoadEc2KeyPair(t, exampleFolder)
-	//
-	//	testExportersGoodHealth(t, terraformOptions, keyPair)
-	//})
+	test_structure.RunTestStage(t, "validate", func() {
+		terraformOptions := test_structure.LoadTerraformOptions(t, exampleFolder)
+		testCheckup(t, terraformOptions)
+
+	})
 }
 
 func configureTerraformOptions(t *testing.T, exampleFolder string) (*terraform.Options, *aws.Ec2Keypair) {
@@ -80,40 +79,15 @@ func configureTerraformOptions(t *testing.T, exampleFolder string) (*terraform.O
 	return terraformOptions, keyPair
 }
 
-//func testExportersGoodHealth(t *testing.T, terraformOptions *terraform.Options, keyPair *aws.Ec2Keypair) {
-//	publicInstanceIP := terraform.Output(t, terraformOptions, "public_ip")
-//
-//	publicHost := ssh.Host{
-//		Hostname:    publicInstanceIP,
-//		SshKeyPair:  keyPair.KeyPair,
-//		SshUserName: "ubuntu",
-//	}
-//
-//	maxRetries := 30
-//	timeBetweenRetries := 5 * time.Second
-//	description := fmt.Sprintf("SSH to public host %s", publicInstanceIP)
-//
-//	// Run a simple echo command on the server
-//	expectedText := "200"
-//
-//	port := []string{"80"}
-//
-//	command := fmt.Sprintf("curl -sL -w \"%%{http_code}\" localhost:%s/metrics -o /dev/null", port, )
-//
-//	description = fmt.Sprintf("SSH to public host %s with error command", publicInstanceIP)
-//
-//	// Verify that we can SSH to the Instance and run commands
-//	retry.DoWithRetry(t, description, maxRetries, timeBetweenRetries, func() (string, error) {
-//		actualText, err := ssh.CheckSshCommandE(t, publicHost, command)
-//
-//		if err != nil {
-//			return "", err
-//		}
-//
-//		if strings.TrimSpace(actualText) != expectedText {
-//			return "", fmt.Errorf("Expected SSH command to return '%s' but got '%s'", expectedText, actualText)
-//		}
-//
-//		return "", nil
-//	})
-//}
+func testCheckup(t *testing.T, terraformOptions *terraform.Options) {
+	tlsConfig := tls.Config{}
+
+	maxRetries := 30
+	timeBetweenRetries := 5 * time.Second
+	publicIP := terraform.Output(t, terraformOptions, "public_ip")
+
+	instanceText
+
+
+	http_helper.HttpGetWithRetry(t, publicIP, &tlsConfig, 200, instanceText, maxRetries, timeBetweenRetries)
+}
