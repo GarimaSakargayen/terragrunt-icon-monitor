@@ -85,9 +85,16 @@ resource "aws_instance" "this" {
   key_name             = aws_key_pair.this.*.key_name[0]
 }
 
+resource "aws_eip" "this" {}
+
+resource "aws_eip_association" "main_ip" {
+  instance_id = join("", aws_instance.this.*.id)
+  public_ip   = aws_eip.this.public_ip
+}
+
 module "ansible" {
   source           = "github.com/insight-infrastructure/terraform-aws-ansible-playbook.git?ref=v0.10.0"
-  ip               = join("", aws_instance.this.*.public_ip)
+  ip               = join("", aws_eip.this.*.public_ip)
   user             = "ubuntu"
   private_key_path = var.private_key_path
 
@@ -97,11 +104,19 @@ module "ansible" {
   requirements_file_path = "${path.module}/ansible/requirements.yml"
 }
 
-resource "aws_eip" "public_ip" {}
+data "aws_route53_zone" "this" {
+  count = var.hostname != "" && var.root_domain_name != "" ? 1 : 0
+  name  = "${var.root_domain_name}."
+}
 
-resource "aws_eip_association" "main_ip" {
-  instance_id = join("", aws_instance.this.*.id)
-  public_ip   = aws_eip.public_ip.public_ip
+resource "aws_route53_record" "this" {
+  count = var.hostname != "" && var.root_domain_name != "" ? 1 : 0
+  zone_id = join("", data.aws_route53_zone.this.*.zone_id)
+
+  name    = "${var.hostname}.${var.root_domain_name}"
+  type    = "A"
+  ttl     = "300"
+  records = [aws_eip.this.public_ip]
 
   depends_on = [module.ansible]
 }

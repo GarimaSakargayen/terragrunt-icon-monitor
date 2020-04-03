@@ -52,3 +52,15 @@ variable "public_key" {
   description = "Public ssh key"
   type        = string
 }
+
+variable "root_domain_name" {
+  description = "The root domain"
+  type = string
+  default = ""
+}
+
+variable "hostname" {
+  description = "hostname for A record - blank to not create record at all"
+  type = string
+  default = ""
+}
