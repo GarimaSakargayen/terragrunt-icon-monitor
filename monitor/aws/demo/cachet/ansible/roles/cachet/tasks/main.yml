@@ -1,9 +1,21 @@
 ---
+- name: check if rules file exists
+  stat:
+    path: /home/ubuntu/cachet
+  register: cachet_git
+
+- name: clone cachet
+  git:
+    repo: "https://github.com/CachetHQ/Docker.git"
+    dest: /home/ubuntu/cachet
+    version: v2.3.15
+  become_user: ubuntu
+  when: cachet_git.stat.exists == false
 
 - name: Render the docker-compose file
   template:
     src: "{{ role_path }}/templates/docker-compose.yml.j2"
-    dest: /home/ubuntu/docker-compose.yml
+    dest: /home/ubuntu/cachet/docker-compose.yml
     mode: '0644'
     owner: ubuntu
     group: ubuntu
@@ -16,10 +28,21 @@
     group: root
     mode: 0600
 
-- name: Copy over dockerfile
-  synchronize:
-    src: "{{ role_path }}/files"
-    dest: /home/ubuntu
+- name: copy docker
+  copy:
+    src: Dockerfile
+    dest: /home/ubuntu/cachet/Dockerfile
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+
+- name: copy entrypoint.sh
+  copy:
+    src: entrypoint.sh
+    dest: /home/ubuntu/cachet/entrypoint.sh
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
 
 - name: Enable and start service
   systemd:

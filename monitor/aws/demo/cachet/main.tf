@@ -94,7 +94,7 @@ resource "aws_eip_association" "main_ip" {
 
 module "ansible" {
   source           = "github.com/insight-infrastructure/terraform-aws-ansible-playbook.git?ref=v0.10.0"
-  ip               = join("", aws_eip.this.public_ip)
+  ip               = join("", aws_eip.this.*.public_ip)
   user             = "ubuntu"
   private_key_path = var.private_key_path
 
@@ -110,7 +110,9 @@ data "aws_route53_zone" "this" {
 }
 
 resource "aws_route53_record" "this" {
-  zone_id = data.aws_route53_zone.this.zone_id
+  count = var.hostname != "" && var.root_domain_name != "" ? 1 : 0
+  zone_id = join("", data.aws_route53_zone.this.*.zone_id)
+
   name    = "${var.hostname}.${var.root_domain_name}"
   type    = "A"
   ttl     = "300"
