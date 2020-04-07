@@ -1,33 +1,71 @@
 ---
 
-- name: Render the docker-compose file
-  template:
-    src: "{{ role_path }}/templates/docker-compose.yml.j2"
-    dest: /home/ubuntu/docker-compose.yml
-    mode: '0644'
+- name: create statusfy dir
+  file:
+    path: /home/ubuntu/statusfy
+    mode: '0755'
+    state: directory
     owner: ubuntu
     group: ubuntu
 
-- name: Render the config file
+- name: copy dockerfile
   template:
-    src: "{{ role_path }}/templates/config.js.j2"
-    dest: /home/ubuntu/config.js
-    mode: '0644'
-    owner: ubuntu
-    group: ubuntu
-
-- name: Copy service
-  template:
-    src: "{{ role_path }}/templates/statusfy.service.j2"
+    src: "{{ role_path }}/templates/"
     dest: /etc/systemd/system/statusfy.service
     owner: root
     group: root
     mode: 0600
 
+- name:
+  become: yes
+  become_user: ubuntu
+  args:
+    chdir: /home/ubuntu/statusfy
+  shell: |
+    set -o pipefail
+    npx statusfy init
 
-- name: Enable and start service
-  systemd:
-    name: statusfy
-    enabled: yes
-    state: started
+#- name: clone statusfy
+#  git:
+#    repo: "https://github.com/bazzite/statusfy.git"
+#    dest: /home/ubuntu/statusfy
+#    version: v0.5.0
+#  become_user: ubuntu
 
+#- name: Copy service
+#  template:
+#    src: "{{ role_path }}/templates/statusfy.service.j2"
+#    dest: /etc/systemd/system/statusfy.service
+#    owner: root
+#    group: root
+#    mode: 0600
+
+#- name: copy dockerfile
+#  template:
+#    src: "{{ role_path }}/templates/"
+#    dest: /etc/systemd/system/statusfy.service
+#    owner: root
+#    group: root
+#    mode: 0600
+
+#- name: Render the docker-compose file
+#  template:
+#    src: "{{ role_path }}/templates/docker-compose.yml.j2"
+#    dest: /home/ubuntu/docker-compose.yml
+#    mode: '0644'
+#    owner: ubuntu
+#    group: ubuntu
+#
+#- name: Render the config file
+#  template:
+#    src: "{{ role_path }}/templates/config.js.j2"
+#    dest: /home/ubuntu/config.js
+#    mode: '0644'
+#    owner: ubuntu
+#    group: ubuntu
+
+#- name: Enable and start service
+#  systemd:
+#    name: statusfy
+#    enabled: yes
+#    state: started
