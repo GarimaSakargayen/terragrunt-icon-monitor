@@ -1,0 +1,7 @@
+[program:cachet-queue]
+command=php artisan queue:work --delay=1 --sleep=1 --timeout=1800 --tries=3
+directory=/var/www/cachet/
+redirect_stderr=true
+autostart=true
+autorestart=true
+user=cachet

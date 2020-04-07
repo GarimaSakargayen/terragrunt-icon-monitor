@@ -1,5 +1,5 @@
 ---
-- name: check if rules file exists
+- name: check if cachet exists
   stat:
     path: /home/ubuntu/cachet
   register: cachet_git
