@@ -1,14 +1,12 @@
+# Credit https://hub.docker.com/r/treemo/checkup/dockerfile
 FROM alpine:latest
-
 
 # install requirements
 RUN apk update
 RUN apk add ca-certificates
 
-
 # install web server
 RUN apk add lighttpd
-
 
 # build app
 ENV GOPATH /go
@@ -19,16 +17,13 @@ RUN cp -r /go/src/github.com/sourcegraph/checkup/statuspage/* /var/www/localhost
 RUN apk del --purge go git gcc libc-dev libgcc
 RUN rm -rf $GOPATH
 
-
 # add fs mode in html
 RUN sed -i '\|js/s3| s|$| <script src="js/fs.js"></script>|' /var/www/localhost/htdocs/index.html
-
 
 # clean / optimise docker size
 RUN apk cache clean &
 RUN rm -rf /var/cache/apk/*
 RUN rm -rf /tmp/* /var/tmp/*
-
 
 # running
 EXPOSE 80

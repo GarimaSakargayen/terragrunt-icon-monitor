@@ -51,3 +51,10 @@ module "db" {
   tags = module.label.tags
 }
 
+module "postgres" {
+  source = "./postgres"
+
+  host = module.db.this_db_instance_address
+  password = var.password
+  username = var.username
+}
