@@ -3,9 +3,6 @@
     - { role: "dev-sec.os-hardening", when: ansible_hardening | default(false) | bool }
     - { role: "dev-sec.ssh-hardening", when: ansible_hardening | default(false) | bool }
     - { role: volumes, when: instance_store_enabled | default(false) | bool }
-    - { role: "geerlingguy.php", when: cachet_local_build | default(false) | bool }
-    - { role: "geerlingguy.git", when: cachet_local_build | default(false) | bool }
-    - { role: "geerlingguy.composer", when: cachet_local_build | default(false) | bool }
     - common
     - role: geerlingguy.certbot
       become: yes
@@ -16,4 +13,4 @@
             - "{{ fqdn }}"
       certbot_create_standalone_stop_services: []
 
-    - cachet
+    - checkup
