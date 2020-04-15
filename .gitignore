@@ -1,7 +1,7 @@
 .idea
 
 # Terraform and terragrunt
-*.tfstate/
+*.tfstate
 *.tfstate.backup
 *.tfplan
 .terragrunt-cache/
@@ -19,7 +19,7 @@ global.yaml
 account.tfvars
 region.tfvars
 group.tfvars
-account.hcl
+monitor/aws/account.hcl
 region.hcl
 # For group vars
 terraform.tfvars
@@ -42,3 +42,10 @@ packer/
 modules/
 
 /tmp
+_save
+
+monitor/aws/demo/cachet/ansible/roles/cachet/templates/.env.j2
+monitor/aws/cachet/ansible/roles/cachet/templates/.env.j2
+.env
+.env.*
+!.env.defaults

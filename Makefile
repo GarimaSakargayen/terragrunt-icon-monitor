@@ -40,17 +40,7 @@ destroy-all-aws:
 	$(call tg_cmd,destroy-all,polkadot/aws)
 
 test-aws:
-	go test ./polkadot/aws/test -v -timeout 15m
-
-apply-packet:
-	$(call tg_cmd,apply-all,polkadot/packet)
-
-destroy-packet:
-	$(call tg_cmd,destroy-all,polkadot/packet)
-
-test-packet:
-	go test ./polkadot/packet/test -v -timeout 15m
-
+	go test ./polkadot/aws/test -v -timeout 45m
 
 ##################
 # meta git actions
