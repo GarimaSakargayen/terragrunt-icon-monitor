@@ -2,59 +2,96 @@
 
 - name: Create group
   group:
-    name: {{ group_name }}
+    name: "{{ group_name }}"
     state: present
 
-- name: Add icon user
+- name: Add user
   user:
-    name: {{ username }}
-    group: {{ group_name }}
+    name: "{{ username }}"
+    group: "{{ group_name }}"
+    append: yes
+
+- name: Add user to docker group
+  user:
+    name: "{{ username }}"
+    groups: docker
     append: yes
 
 - name: check if cachet exists
   stat:
-    path: /home/ubuntu/cachet
+    path: /home/cachet/cachet-docker
   register: cachet_git
 
 - name: clone cachet
   git:
-    repo: "https://github.com/CachetHQ/Docker.git"
-    dest: /home/ubuntu/cachet
+    repo: "https://github.com/insight-icon/cachet-docker.git"
+    dest: /home/cachet/cachet-docker
     version: v2.3.15
-  become_user: ubuntu
+  become_user: cachet
+  become: "yes"
   when: cachet_git.stat.exists == false
+
+- name: Create cert directory if it does not exist
+  file:
+    path: /home/cachet/cachet-docker/certs
+    state: directory
+    mode: '0755'
+    owner: cachet
+    group: cachet
+
+- name: Move cert to certs
+  command: cp /etc/letsencrypt/live/{{ fqdn }}/fullchain.pem /home/cachet/cachet-docker/certs/fullchain.pem
+
+- name: Move key to certs
+  command: cp /etc/letsencrypt/live/{{ fqdn }}/privkey.pem /home/cachet/cachet-docker/certs/privkey.pem
 
 - name: Render the docker-compose file
   template:
-    src: "{{ role_path }}/templates/docker-compose.yml.j2"
-    dest: /home/ubuntu/cachet/docker-compose.yml
+    src: docker-compose.yml.j2
+    dest: /home/cachet/cachet-docker/docker-compose.yml
     mode: '0644'
-    owner: ubuntu
-    group: ubuntu
+    owner: "{{ username }}"
+    group: "{{ group_name }}"
+
+- name: copy the Dockerfile
+  copy:
+    src: Dockerfile
+    dest: /home/cachet/cachet-docker/Dockerfile
+    mode: '0644'
+    owner: "{{ username }}"
+    group: "{{ group_name }}"
+
+- name: copy dockerignore - muy importante
+  copy:
+    src: cachet.dockerignore
+    dest: /home/cachet/cachet-docker/.dockerignore
+    mode: '0644'
+    owner: "{{ username }}"
+    group: "{{ group_name }}"
+
+- name: Render the nginx file
+  template:
+    src: nginx-site.conf.j2
+    dest: /home/cachet/cachet-docker/conf/nginx-site.conf
+    mode: '0644'
+    owner: "{{ username }}"
+    group: "{{ group_name }}"
+
+- name: Copy over the env file
+  copy:
+    src: "{{ env_file | default('.env.defaults')}}"
+    dest: /home/cachet/cachet-docker/.env
+    mode: '0644'
+    owner: "{{ username }}"
+    group: "{{ group_name }}"
 
 - name: Copy service
   template:
-    src: "{{ role_path }}/templates/cachet.service.j2"
+    src: cachet.service.j2
     dest: /etc/systemd/system/cachet.service
     owner: root
     group: root
     mode: 0600
-
-- name: copy docker
-  copy:
-    src: Dockerfile
-    dest: /home/ubuntu/cachet/Dockerfile
-    owner: ubuntu
-    group: ubuntu
-    mode: '0644'
-
-- name: copy entrypoint.sh
-  copy:
-    src: entrypoint.sh
-    dest: /home/ubuntu/cachet/entrypoint.sh
-    owner: ubuntu
-    group: ubuntu
-    mode: '0644'
 
 - name: Enable and start service
   systemd:
