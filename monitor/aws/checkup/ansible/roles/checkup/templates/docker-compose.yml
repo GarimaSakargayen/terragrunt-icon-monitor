@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  nginx:
+    image: nginx:1.16.1-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - web
+    depends_on:
+      - checkup
+#      - cachet
+
+  checkup:
+    image: treemo/checkup
+    container_name: checkup
+    volumes:
+      - ./config/checkup.json:/checkup.json
+      - ./config/config.js:/var/www/localhost/htdocs/js/config.js
+      - ./data:/var/www/localhost/htdocs/data
+    environment:
+      - CHECK_INTERVALl=5m
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 500M
+        reservations:
+          cpus: '0.15'
+          memory: 200M
+    ports:
+      - "8080"
+
+networks:
+  web:
+    driver: bridge

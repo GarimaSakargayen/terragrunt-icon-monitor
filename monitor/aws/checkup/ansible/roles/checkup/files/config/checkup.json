@@ -1,0 +1,7 @@
+{
+  "checkers": [],
+  "storage": {
+    "provider": "fs",
+    "dir": "/var/www/localhost/htdocs/data"
+  }
+}
