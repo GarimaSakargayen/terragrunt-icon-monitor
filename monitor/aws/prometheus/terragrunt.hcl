@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-icon/terraform-icon-monitor-aws-network.git?ref=${local.vars.versions.aws.network}"
+  source = "github.com/insight-icon/terraform-icon-monitor-aws-network.git?ref=${local.vars.versions.aws.prometheus}"
 }
 
 include {

@@ -1,0 +1,12 @@
+dev:
+  aws:
+    rds: master
+    cachet: master
+    prometheus: master
+    network: master
+prod:
+  aws:
+    rds: master
+    cachet: master
+    prometheus: master
+    network: master

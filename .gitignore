@@ -44,7 +44,7 @@ modules/
 /tmp
 _save
 
-monitor/aws/demo/cachet/ansible/roles/cachet/templates/.env.j2
+monitor/demo/cachet/ansible/roles/cachet/templates/.env.j2
 monitor/aws/cachet/ansible/roles/cachet/templates/.env.j2
 .env
 .env.*
