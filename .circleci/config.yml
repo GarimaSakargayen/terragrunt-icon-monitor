@@ -15,11 +15,6 @@ jobs:
           command: |
             ssh-keygen -b 2048 -t rsa -f ./id_rsa -q -N ""
             ./.circleci/test-trigger.sh
-      - run:
-          name: Destroy on failure
-          command: |
-            ./cloud-nuke aws --force
-          when: on_fail
 
 workflows:
   version: 2
