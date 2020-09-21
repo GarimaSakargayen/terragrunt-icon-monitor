@@ -3,6 +3,8 @@
     "modules/terraform-aws-ec2-prometheus": "https://github.com/insight-infrastructure/terraform-aws-ec2-prometheus",
     "modules/terraform-icon-monitor-aws-network": "https://github.com/insight-icon/terraform-icon-monitor-aws-network",
     "modules/terraform-icon-monitor-aws-cachet": "https://github.com/insight-icon/terraform-icon-monitor-aws-cachet",
-    "modules/icon-prometheus-exporter": "https://github.com/insight-icon/icon-network-exporter"
+    "modules/icon-prometheus-exporter": "https://github.com/insight-icon/icon-network-exporter",
+    "modules/cachet-docker": "https://github.com/insight-icon/cachet-docker",
+    "modules/dockprom": "https://github.com/stefanprodan/dockprom"
   }
 }
