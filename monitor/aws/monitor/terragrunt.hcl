@@ -26,7 +26,7 @@ dependency "backend" {
 }
 
 inputs = {
-  env_file = "env-files/.env.${local.vars.environment}"
+  env_file = "${get_terragrunt_dir()}/env-files/.env.${local.vars.environment}"
 
   # Network
   security_group_id = dependency.network.outputs.cachet_security_group_id

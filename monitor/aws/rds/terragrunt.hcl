@@ -31,7 +31,7 @@ inputs = {
   identifier = local.vars.environment
 
   subnet_ids = dependency.network.outputs.public_subnets
-  security_group = dependency.network.outputs.rds_security_group_id
+  vpc_security_group_ids = [dependency.network.outputs.rds_security_group_id]
 
   engine               = "postgres"
   engine_version       = "9.6.9"

@@ -1,7 +1,7 @@
 dev:
   aws:
     rds: master
-    cachet: dockprom
+    cachet: master
     prometheus: master
     network: master
 prod:
